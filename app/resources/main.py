@@ -45,12 +45,8 @@ class AnswerOperations(MethodView):
     @blp.arguments(AnswerSchema)
     @blp.response(201, AnswerSchema)
     def post(self, answer_data):
-        global iaResponse
-        if(iaResponse != None):
-            iaResponse = answer_data
-            return iaResponse
-        else:
-            abort(400, message="There is already an answer in queue") 
+        iaResponse = answer_data
+        return iaResponse
     
     @blp.response(201, AnswerSchema)
     def get(self):

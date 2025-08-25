@@ -52,9 +52,7 @@ class AnswerOperations(MethodView):
     def get(self):
         global iaResponse
         if(iaResponse != None):
-            response = iaResponse
-            iaResponse = None
-            return response
+            return iaResponse
         else:
             abort(400, message="There is no answer to return") 
 

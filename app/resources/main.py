@@ -7,7 +7,7 @@ from flask_smorest import Blueprint, abort
 from app.schemas import QuestionSchema, AnswerSchema
 
 blp = Blueprint("Main", __name__)
-iaResponse = None
+ia_answer = None
 appQuestion = None
 hasAnswered = False
 
@@ -43,18 +43,20 @@ class QuestionOperations(MethodView):
 class AnswerOperations(MethodView):
 
     @blp.arguments(AnswerSchema)
-    @blp.response(201, AnswerSchema)
+    @blp.response(201, AnswerSchema) 
     def post(self, answer_data):
-        iaResponse = answer_data
-        return iaResponse
-    
-    @blp.response(201, AnswerSchema)
+        global ia_answer
+        ia_answer = answer_data["answer"]  
+        return {"answer": ia_answer}
+
+    @blp.response(200, AnswerSchema)  
     def get(self):
-        global iaResponse
-        if(iaResponse != None):
-            return iaResponse
-        else:
-            abort(400, message="There is no answer to return") 
+        global ia_answer
+        if ia_answer:
+            out = {"answer": ia_answer}
+            ia_answer = None  
+            return out
+        abort(400, message="There is no answer to return")
 
 @blp.route("/health")
 def health():

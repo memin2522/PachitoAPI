@@ -1,0 +1,6 @@
+waitress==3.0.0
+python-dotenv==0.19.2
+flask
+flask-smorest
+marshmallow
+cryptography 

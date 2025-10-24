@@ -2,6 +2,8 @@ import json
 import threading
 from . import sock
 
+from app.schemas import WSAnswerSchema
+
 _subscribers = set()
 _lock = threading.Lock()
 _last_answer = None
@@ -9,15 +11,14 @@ _last_answer = None
 def register_ws_routes(app):
     @sock.route("/ws/answer")
     def ws_answer(ws):
-        # registrar
         with _lock:
             _subscribers.add(ws)
             last = _last_answer
 
-        # si quieres “replay” de la última respuesta al conectar
         if last is not None:
             try:
-                ws.send(json.dumps({"type":"answer","answer": last}))
+                payload_text = WSAnswerSchema.dumps({"answer": last})
+                ws.send(payload_text)
             except Exception:
                 pass
 
@@ -31,3 +32,17 @@ def register_ws_routes(app):
         finally:
             with _lock:
                 _subscribers.discard(ws)
+
+def broadcast_answer(answer: str):
+    global _last_answer
+    payload = json.dumps({"type":"answer","answer": answer})
+    dead = []
+    with _lock:
+        _last_answer = answer
+        for ws in list(_subscribers):
+            try:
+                ws.send(payload)
+            except Exception:
+                dead.append(ws)
+        for ws in dead:
+            _subscribers.discard(ws)

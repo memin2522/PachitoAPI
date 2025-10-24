@@ -6,3 +6,8 @@ class QuestionSchema(Schema):
 
 class AnswerSchema(Schema):
     answer = fields.Str(required=True)
+
+class WSAnswerSchema(Schema): 
+    type = fields.Constant("answer")
+    answer = fields.String(required=True) 
+    jobId = fields.String(load_default=None)

@@ -3,6 +3,7 @@ from flask_smorest import Api
 from flask_sock import Sock
 
 from .resources.main import blp as MainBlueprint
+from .ws_routes import register_ws_routes
 
 sock = Sock()
 
@@ -24,5 +25,6 @@ def create_app():
     api.register_blueprint(MainBlueprint)
 
     sock.init_app(app)
+    register_ws_routes(app)
 
     return app

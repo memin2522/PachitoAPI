@@ -1,7 +1,10 @@
 from flask import Flask 
 from flask_smorest import Api
+from flask_sock import Sock
 
 from .resources.main import blp as MainBlueprint
+
+sock = Sock()
 
 def create_app():
     app = Flask(__name__)
@@ -18,7 +21,8 @@ def create_app():
     
     
     api = Api(app)
-    
     api.register_blueprint(MainBlueprint)
+
+    sock.init_app(app)
 
     return app
